@@ -4,7 +4,6 @@
 from __future__ import unicode_literals
 import frappe
 import re
-from past.builtins import cmp
 import functools
 from frappe import _
 from frappe.utils import flt, cint

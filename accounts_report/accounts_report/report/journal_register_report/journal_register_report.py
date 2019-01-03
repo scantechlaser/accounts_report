@@ -186,7 +186,7 @@ def get_gl_entries(filters):
 
 					if(str(j['account_credit']) != '0.0'):
 
-						j[mykey] = str(j['account_credit'])
+						j[mykey] = '-'+str(j['account_credit'])
 
 					j['bill_no'] = j['bill_no']
 
@@ -220,7 +220,7 @@ def get_gl_entries(filters):
 
 								if(str(j['account_credit']) !='0.0'):
 
-									m[str(j['account'])] = float(m[str(j['account'])]) + float(j['account_credit'])
+									m[str(j['account'])] = float(m[str(j['account'])]) - float(j['account_credit'])
 								else:
 
 									m[str(j['account'])] = float(m[str(j['account'])]) + float(j['account_debit'])
@@ -237,7 +237,7 @@ def get_gl_entries(filters):
 
 									else:
 
-										m[mykey] =  float(j['account_credit'])
+										m[mykey] =  '-'+str(float(j['account_credit']))
 
 
 								columnsObj = {}
@@ -281,7 +281,9 @@ def get_gl_entries(filters):
 
 						if(str(j['account']) != str(setPriority)):
 
-							j['credit'] = float("-"+str(j['credit']))
+							if float(j['credit']) > 0.0:
+								
+								j['credit'] = float("-"+str(j['credit']))
 
 							mykey = str(j['account'])
 
@@ -289,7 +291,7 @@ def get_gl_entries(filters):
 
 							if(str(j['account_credit']) != '0.0'):
 
-								j[mykey] = str(j['account_credit'])
+								j[mykey] = '-'+str(j['account_credit'])
 
 							j['bill_no'] = j['bill_no']
 

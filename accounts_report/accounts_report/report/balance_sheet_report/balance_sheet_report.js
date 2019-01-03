@@ -43,7 +43,7 @@ frappe.require("assets/erpnext/js/financial_statements.js", function() {
 						{ "value": "Half-Yearly", "label": __("Half-Yearly") },
 						{ "value": "Yearly", "label": __("Yearly") }
 					],
-					"default": "Monthly",
+					"default": "Yearly",
 					"reqd": 1
 				});
 
