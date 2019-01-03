@@ -5,7 +5,6 @@ import frappe
 from frappe.desk.moduleview import get
 def get_data():
 
-	frapee.msgprint(8939393)
 	return [
 		{
 			"module_name": "HR",
