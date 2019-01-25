@@ -52,6 +52,12 @@ def get_data():
 					"name":"GP Ratio",
 					"doctype": "account_report",
 					"is_query_report": True,
+				},
+				{
+					"type":"report",
+					"name":"Journal Register Report",
+					"doctype":"account_report",
+					"is_query_report":True,
 				}
 			]
 		},
