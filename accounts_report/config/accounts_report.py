@@ -46,6 +46,12 @@ def get_data():
 					"name":"Cash Flow Report",
 					"doctype": "account_report",
 					"is_query_report": True,
+				},
+				{
+					"type": "report",
+					"name":"GP Ratio",
+					"doctype": "account_report",
+					"is_query_report": True,
 				}
 			]
 		},
