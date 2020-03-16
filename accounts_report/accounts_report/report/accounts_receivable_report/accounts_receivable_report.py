@@ -23,24 +23,24 @@ class ReceivablePayableReport(object):
 		total_invoice_amount = 0
 		total_debit_amount = 0
 		total_paid_amount = 0
-		args = {
-			"party_type": "Supplier",
-			"naming_by": ["Buying Settings", "supp_master_name"],
-		}
+		# args = {
+		# 	"party_type": "Customer",
+		# "naming_by": ["Selling Settings", "cust_master_name"],
+		# }
 		party_naming_by = frappe.db.get_value(args.get("naming_by")[0], None, args.get("naming_by")[1])
 		columns = self.get_columns(party_naming_by, args)
 		data = self.get_data(party_naming_by, args)
+		# frappe.msgprint(data)
 		if not data:
-			supplier_data = frappe.db.sql("SELECT supplier_name FROM `tabSupplier` WHERE name= '"+str(self.filters.supplier)+"' ", as_dict=True)
-			row = [self.filters.report_date,self.filters.supplier, '', '','','',total_invoice_amount,total_paid_amount,total_debit_amount,total_outstanding_amount]
+			customer_data = frappe.db.sql("SELECT customer_name FROM `tabCustomer` WHERE name= '"+str(self.filters.customer)+"' ", as_dict=True)
+			row = [self.filters.report_date,str(self.filters.customer), str(customer_data[0]['customer_name']),'','',total_invoice_amount,total_paid_amount,total_debit_amount,total_outstanding_amount]
 			data.append(row)
-
 		for i in range(0,len(data)):
-			total_outstanding_amount += data[i][9]
-			total_invoice_amount += data[i][6]
-			total_debit_amount += data[i][8]
-			total_paid_amount += data[i][7]
-		row = ['','Total', '','','','',total_invoice_amount,total_paid_amount,total_debit_amount,total_outstanding_amount]
+			total_outstanding_amount += data[i][8]
+			total_invoice_amount += data[i][5]
+			total_debit_amount += data[i][7]
+			total_paid_amount += data[i][6]
+		row = ['','Total', '','','',total_invoice_amount,total_paid_amount,total_debit_amount,total_outstanding_amount]
 		data.append(row)
 		# chart = self.get_chart_data(columns, data)
 		return columns, data, None
@@ -217,7 +217,7 @@ class ReceivablePayableReport(object):
 				temp_outstanding_amt = outstanding_amount
 				temp_credit_note_amt = credit_note_amount
 
-				if abs(outstanding_amount) > 0.1/10**self.currency_precision:
+				if abs(outstanding_amount) >= 0/10**self.currency_precision:
 					if self.filters.based_on_payment_terms and self.payment_term_map.get(gle.voucher_no):
 						for d in self.payment_term_map.get(gle.voucher_no):
 							# Allocate payment amount based on payment terms(FIFO order)
@@ -234,7 +234,8 @@ class ReceivablePayableReport(object):
 							# Allocate PDC based on payment terms(FIFO order)
 							d.pdc_details, d.pdc_amount = self.allocate_pdc_amount_in_fifo(gle, row_outstanding)
 
-							if term_outstanding_amount > 0:
+							if term_outstanding_amount >= 0:
+								frappe.msgprint(12)
 								row = self.prepare_row(party_naming_by, args, gle, term_outstanding_amount,
 									d.credit_note_amount, d.due_date, d.payment_amount , d.payment_term_amount,
 									d.description, d.pdc_amount, d.pdc_details)
@@ -610,22 +611,22 @@ class ReceivablePayableReport(object):
 	# 		"type": 'percentage'
 	# 	}
 
-def execute(filters=None):
-
-	# frappe.throw(_(2323232323))
-	args = {
-		"party_type": "Supplier",
-		"naming_by": ["Buying Settings", "supp_master_name"],
-	}
-	return ReceivablePayableReport(filters).run(args)
-
-
 # def execute(filters=None):
+
+# 	# frappe.throw(_(2323232323))
 # 	args = {
-# 		"party_type": "Customer",
-# 		"naming_by": ["Selling Settings", "cust_master_name"],
+# 		"party_type": "Supplier",
+# 		"naming_by": ["Buying Settings", "supp_master_name"],
 # 	}
 # 	return ReceivablePayableReport(filters).run(args)
+
+
+def execute(filters=None):
+	args = {
+		"party_type": "Customer",
+		"naming_by": ["Selling Settings", "cust_master_name"],
+	}
+	return ReceivablePayableReport(filters).run(args)
 
 def get_ageing_data(first_range, second_range, third_range, age_as_on, entry_date, outstanding_amount):
 	# [0-30, 30-60, 60-90, 90-above]

@@ -105,6 +105,19 @@ def get_result(filters, account_details):
 	return result, mydata
 
 
+def get_address_gst(name='', party_type=''):
+
+	address = ''
+	gst = ''
+	my_sql = "SELECT * FROM `tabAddress` WHERE address_title like '%"+str(name)+"%' "
+	getAddress = frappe.db.sql(my_sql, as_dict=True)
+	if getAddress:
+		address = str(getAddress[0].address_line1)+', '+str(getAddress[0].address_line2)+', '+str(getAddress[0].city)+', '+str(getAddress[0].country)+', '+str(getAddress[0].pincode)
+		gst = str(getAddress[0].gstin)
+
+	return address, gst
+
+
 def get_gl_entries(filters):
 
 	if filters.get("presentation_currency"):
@@ -157,11 +170,13 @@ def get_gl_entries(filters):
 				myVar = myVar +1
 
 				j['particulars'] = ''
-				
-				setPriority, totalGross, isDuplicate = setPriorityOfAccount(j.voucher_no, setParticulars, tempColoumn)
 
+				if j.party_type:
+					address, gst = get_address_gst(j.party_name,j.party_type)
 
-
+					j['address'] = address
+					j['gst_no'] = gst
+					setPriority, totalGross, isDuplicate = setPriorityOfAccount(j.voucher_no, setParticulars, tempColoumn)
 
 				if setPriority and isDuplicate:
 
@@ -263,8 +278,15 @@ def get_gl_entries(filters):
 						myVar = myVar +1
 
 						j['particulars'] = ''						
+						if j.party_type:
 
-						setPriority, totalGross, isDuplicate = setPriorityOfAccount(j.voucher_no, setParticulars, tempColoumn)
+							address, gst = get_address_gst(j.party_name,j.party_type)
+
+							j['address'] = address
+							j['gst_no'] = gst
+					
+							setPriority, totalGross, isDuplicate = setPriorityOfAccount(j.voucher_no, setParticulars, tempColoumn)
+						# setPriority, totalGross, isDuplicate = setPriorityOfAccount(j.voucher_no, setParticulars, tempColoumn)
 
 
 						if setPriority != None and str(setPriority) != '' and isDuplicate == True:
